@@ -52,3 +52,79 @@
 1. `strict`: 默认全部打开
 2. `noImplicitAny`: any 意味着 ts 不管, 此开关会禁止隐式的 any
 3. `strictNullChecks`: 需要显式地处理 null & undefined
+
+## Everyday Type
+> In this chapter, we’ll cover some of the most common types of values you’ll find in JavaScript code, and explain the corresponding ways to describe those types in TypeScript.
+
+### The primitives
+Js 最常用的基本类型(primitives): string, number, boolean
+
+### Arrays
+1. 写法一 `number[]`, `string[]`
+2. 写法二 `Array<number>`
+3. `[number]` 这是元组
+
+### any
+1. 用于不想让一个值引起 ts 的类型检查错误
+2. 当没有标明类型, 且 ts 无法通过上下文推导类型, tsc 会将其默认为 any
+3. 通过 `noImplicitAny` 避免
+
+### Type Annotations on Variables
+当使用 var, let, const 声明一个变量时可以显式进行类型注解, 尽管不是必须的
+
+### Functions
+ts 允许指定函数的输入输出的值的类型
+1. Parameter Type Annotations
+   1. 类型注解在参数后
+   2. 即使不注解, ts 也会检查参数数量
+2. Return Type Annotations
+   1. 返回值类型注解写在参数后
+3. Anonymous Functions
+   1. 上下文类型(contextual typing)
+
+### Object Types
+1. 直接写, 可用逗号或分号分割 `pt: {x: number; y: number;}`
+2. 可选属性(Optional Properties): 在属性名后面加个问号
+   1. 要注意, 如果访问可选属性, 请先判断是否 undefined, 或者用 optional chaining
+
+### Union Types
+1. 定义一个 Union Type
+   1. A union type is a type formed from two or more other types, representing values that **may be any one of those types**.
+   2. We refer to each of these types as the union’s members.  
+2. Working with Union Types
+   1. 可以去传满足该 union type 其中一个的 member 类型的值
+   2. 需要 narrow
+   3. 或者操作他们共有的东西(intersection of those types' properties)
+
+### Type Aliases
+`type xxx = any type`
+
+### Interfaces
+1. 像 anonymous object type, ts 只检查结构和能力(structure and capabilities), 因此 ts 是结构类型类型系统 (structurally typed type system)
+2. Differences Between Type Aliases and Interfaces  
+  A type cannot be re-opened to add new properties vs an interface which is always extendable.  
+   1. interface 用 extends 拓展, type 用 intersections(交叉, &) 拓展
+   2. interface 支持 declaration merging, type 不支持
+
+### Type Assertions
+1. 语法: `<type>xxx` 或 `xxx as type`
+2. TypeScript only allows type assertions which convert to a more specific or less specific version of a type, 防止去转换成一些不可能的值. 可以使用 `const a = (expr as any) as T;`
+
+### Literal Types
+1. 当使用了 const 来声明, 相当于 ts 创建了一个字面量类型
+2. 可以通过 union 组合起来, 如 `type boolean = true | false`
+3. Literal Inference: 当字母量推断失败, 可以使用: `as LiteralType` 或 `as const`
+
+### null and undefined
+他们的表现取决于 `strictNullChecks`
+1. strictNullChecks off: the values null and undefined can be assigned to a property of any type
+2. strictNullChecks on: when a value is null or undefined, you will need to test for those values before using methods or properties on that value.
+3. Non-null Assertion Operator (postfix !)
+
+### Enums
+describe a value which could be one of a set of possible named constants
+不是一个类型层面(type-level)的存在, 会编译进代码的
+
+### Less Common Primitives
+1. bigint
+2. symbol: 不要标注类型, ts 会给单独给 symbol 实例创建类型
