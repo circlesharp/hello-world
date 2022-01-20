@@ -8,6 +8,8 @@ console.log(a!);
 
 const f = Symbol('')
 const s = Symbol('')
-if (s === f) {
-  console.log(1);
-}
+
+// wrong 永远不相等
+// if (s === f) {
+//   console.log(1);
+// }

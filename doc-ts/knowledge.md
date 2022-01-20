@@ -128,3 +128,50 @@ describe a value which could be one of a set of possible named constants
 ### Less Common Primitives
 1. bigint
 2. symbol: 不要标注类型, ts 会给单独给 symbol 实例创建类型
+
+## Narrowing
+> Much like how TypeScript analyzes runtime values using static types, it overlays type analysis on JavaScript’s runtime control flow constructs like if/else, conditional ternaries, loops, truthiness checks, etc., which can all affect those types.  
+> ts 在 js 运行时控制流结构中也覆盖了类型检查, 这些结构包括: if/else, 三元表达式, 循环, 真实性检查  
+> narrow: the process of refining types to more specific types  
+
+### typeof type guards
+1. typeof: string, number, bigint, boolean, symbol, undefined, object, function
+2. ts 也知道 js typeof 的一些怪癖(quirks)
+
+### Truthiness narrowing
+1. js coerce things to boolean, when: `&&, ||, if, !, ...`
+2. 等价于 `Boolean` (Boolean function) 或 `!!` (double-Boolean negation)
+3. 谨记, 对基本类型使用 truthiness checking 通常易出错, 因为诸如 空字符, 数字0 会被认为错误
+
+### Equality narrowing
+1. switch
+2. ===, !==, ==, !=
+
+### The in operator narrowing
+1. "value" in x. where "value" is a string literal and x is a union type
+2. 如果是可选属性(optional property), 会出现在 narrowing 的真假两条分支
+
+### instanceof narrowing
+1. x instanceof Foo checks whether the prototype chain of x contains Foo.prototype
+2. instanceof 因l此也是 type guard
+
+### Assignments
+如果标注的类型是 union, 允许给这个变量赋值 union 其中的任一 member, 且 ts 能 narrow
+
+### Control flow analysis
+基于代码是否可抵达(reachability)的分析称为控制流分析(control flow analysis), 不同的点变量允许具有不同的类型
+
+### Using type predicates
+1. To define a **user-defined type guard**, we simply need to define a function whose **return type is a type predicate**. 函数的返回值的类型是类型谓词, 类型谓词是用户自定义 type-guard 的一种实现方式
+2. A predicate takes the form `parameterName is Type`, parameterName 必须是函数的参数
+
+### Discriminated unions
+discriminated union: every type in a union contains a common property with literal types, 即 union 的每个 member 都包含一个共同属性, 其类型是字面量
+
+### The never type
+TypeScript will use a never type to represent a state which shouldn’t exist.
+随着 narrow 的进展, 没有 member 剩余的时候, 用 never 代表这个不存在的状态
+
+### Exhaustiveness checking
+The never type is assignable to every type; however, no type is assignable to never (except never itself). 
+可以作为检验是否穷尽了所有状态
