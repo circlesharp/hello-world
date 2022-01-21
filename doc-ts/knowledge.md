@@ -175,3 +175,80 @@ TypeScript will use a never type to represent a state which shouldn’t exist.
 ### Exhaustiveness checking
 The never type is assignable to every type; however, no type is assignable to never (except never itself). 
 可以作为检验是否穷尽了所有状态
+
+## More on Functions
+
+### Function Type Expressions
+1. 最简单的就是函数类型表达式(function type expression): `(a: string) => void`
+
+### Call Signatures
+1. 对于具有属性的函数, 可以使用调用签名(call signature), 写在对象类型上
+2. 注意, call signature 不同于 function type expression, 用 `:` 而非 `=>`
+``` ts
+type Fun = {
+   prop: string;
+   (a: string): boolean;
+}
+```
+
+### Construct Signatures
+1. 构造签名(construct signature): 在 call signature 前增加 new
+2. 部分函数既可构造也可调用, 可以同时写这两个签名
+``` ts
+type Date = {
+   new (s?: string): Date;
+   (s?: string): number;
+}
+```
+
+### Generic Functions
+1. generic: generics are used when we want to describe a correspondence between two values.
+2. type parameter: 可以给函数增加类型参数(type parameter)
+3. Inference: ts 可以在调用的时候推断类型参数, 不需显式传入
+4. Constraints: 可以对这个泛型进行约束
+   1. `<T extends {length: number}>`
+5. Working with Constrained Values: 列举了一个错误示例, 满足 constraint 不代表满足这个泛型
+6. Specifying Type Arguments: 没啥说的
+7. Guidelines for Writing Good Generic Functions
+   1. Push Type Parameters Down: 尽可能使用类型本身, 而非限制它
+   2. Use Fewer Type Parameters
+   3. Type Parameters Should Appear Twice: 如果只用了一次, 想想是否真的需要它
+
+### Optional Parameters
+1. mark the parameter as optional with `?`, 这代表该值的类型会和 undefined 联合(`type | undefined`)
+2. can also provide a parameter default with `= defaultValue`
+3. 对于回调函数, 不要指定可选参数, 除非真的不想传递这个参数
+
+### Function Overloads
+1. Some JavaScript functions can be called in a variety of argument counts and types. In TypeScript, we can specify a function that can be called in different ways by writing overload signatures.
+2. To do this, write some number of function signatures (usually two or more), followed by the body of the function
+3. 函数声明是写在函数定义之上的, 成为 overload signature; 函数体是 implementation signature, 但是是不能直接调用的; 能调用的合法形式只能是 overload signature
+4. Overload Signatures and the Implementation Signature: implementation signature 对外是不可见的, 而且要和诸多 overload signature 兼容
+5. Writing Good Overloads: 尽可能有 union type 的参数代替 overload, 如果 overload signature 不支持 union type, 即使 implementation signature 支持也没用
+
+### Declaring this in a Function
+1. TypeScript will infer what the this should be in a function via code flow analysis
+2. The JavaScript specification states that you cannot have a parameter called this, and so TypeScript uses that syntax space to let you declare the type for this in the function body: `(this: type) => boolean`
+3. 需要注意, 箭头函数不能使用此类型
+4. p.s. 我不知道有啥用
+
+### Other Types to Know About
+1. void: void represents the return value of functions which don’t return a value, 注意: void 与 undefined 是不一样的
+2. object: The special type object refers to any value that isn’t a primitive, 注意: 不同于 {}, 不同于 Object
+3. unknown: The unknown type represents any value, but not the any type; it’s not legal to do anything with an unknown value. 例如: JSON.parse 的结果就是 unknown
+4. never: The never type represents values which are never observed:
+   1. 函数 throw error, 返回值就是 never
+   2. there’s nothing left in a union
+5. Function: describes properties can always be called, return any, 注意, 因为返回值是 any, 代表不安全, 建议在不想调用这个函数的情况下使用安全的 `() => void`
+
+### Rest Parameters and Arguments
+1. Rest Parameters: define functions that take an unbounded number of arguments using rest parameters. 类型必须是 `Array<T>` 或 tuple
+2. Rest Arguments: we can provide a variable number of arguments from an array using the spread syntax; 但注意, ts 不会认为 array 是 immutable, 所以有时需要 as const, 否则可能不符合函数的入参标准
+
+### Parameter Destructuring
+1. You can use parameter destructuring to conveniently unpack objects provided as an argument into one or more local variables in the function body
+
+### Assignability of Functions
+1. a contextual function type with a void return type (type vf = () => void), when implemented, can return any other value, but it will be ignored. 实现了指定了返回值类型为 void 的函数的返回值会被忽略
+2. 这使得 `src.forEach((el) => dst.push(el))` 合理, 因为 forEach 期待的函数的返回值是 void
+3. 如果字面量函数定义 (literal function definition) 制定了 void 为返回类型, 则不能返回东西 (ps 所以第一条强调了 implement)
