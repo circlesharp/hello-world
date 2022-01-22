@@ -252,3 +252,65 @@ type Date = {
 1. a contextual function type with a void return type (type vf = () => void), when implemented, can return any other value, but it will be ignored. 实现了指定了返回值类型为 void 的函数的返回值会被忽略
 2. 这使得 `src.forEach((el) => dst.push(el))` 合理, 因为 forEach 期待的函数的返回值是 void
 3. 如果字面量函数定义 (literal function definition) 制定了 void 为返回类型, 则不能返回东西 (ps 所以第一条强调了 implement)
+
+## Object Types
+> 1. anonymous: `{ name: string; age: number }`
+> 2. interface: `interface Person { name: string; age: number; }`
+> 3. type alias: `type Person = { name: string; age: number; }`
+
+### Property Modifiers
+1. Optional Properties: `?`, 在 strictNullChecks 下:
+   1. 需要判断是否为 undefined
+   2. 也可以用 js 的解构语法提供默认值: `{shape, xPos = 0, yPos = 0}`, 此时, 函数体内所有值都是存在的, 但对于调用函数时确是可选的
+   3. 需要注意, 解构内部是不能写类型标注的, 因为在解构是写冒号意味着重命名
+2. readonly Properties: a property marked as readonly can’t be written to during type-checking
+   1. 在运行是不能改变其值
+   2. 不意味着 immutable, 仅意味着值本身不能改变
+   3. 在检查两个类型是否兼容时, readonly 不在考虑之类
+3. Index Signatures: Sometimes you don’t know all the names of a type’s properties ahead of time, but you do know the shape of the values: `[prop: string]: xxx`
+   1. 索引签名(index signature)属性的类型必须是 string or number
+   2. 如果同时支持两种类型, 数值索引的值必须时字符串索引的子类 (the type returned from a numeric indexer must be a subtype of the type returned from the string indexer.)
+   3. string index signature 会强迫所有属性匹配他们的返回类型, 所以可以对其指定 union
+   4. 可以对 index signature 指定 readonly, 禁止对其索引赋值
+
+### Extending Types
+interface can extend from 1 or multiple interface
+`interface ColorfulCircle extends Colorful, Circle {}`
+
+### Intersection Types
+1. An intersection type is defined using the & operator.
+2. interface vs intersection: 回顾之前的笔记, interface 用 extends 拓展, type 用 intersection 拓展
+3. ps: 交集(intersection of sets), 并集(union of sets)
+
+### Generic Object Types
+``` ts
+// A Box of Type is something whose contents have type Type
+interface Box<Type> {
+  contents: Type;
+}
+```
+不仅 interface 支持泛型, type 也支持泛型
+
+### The Array Type
+1. Generic object types are often some sort of container type that work independently of the type of elements they contain. 泛型对象类型被看作容器, 与他们所储存的元素无关
+2. Array itself is a generic type.
+3. Modern JavaScript also provides other data structures which are generic, like `Map<K, V>, Set<T>, and Promise<T>`, All this really means is that they can work with any sets of types.
+
+### The ReadonlyArray Type
+1. `ReadonlyArray<T>` 或 `readonly T[]`
+2. 不像 readonly property modifier, ReadonlyArray 不能赋值给 Array
+
+### The ReadonlyArray Type
+1. A tuple type is another sort of Array type that knows exactly how many elements it contains, and exactly which types it contains at specific positions:
+   1. 元素数量确定
+   2. 各元素类型确定
+   3. 本质是数组
+2. `[Type1, Type2]`
+3. 如果可以, 用对象来取代元组 (with descriptive property names)
+4. 元组可以有 optional properties: `[Type1, Type2?]`, 可选的类型被认为是 `Type2 | undefined`
+5. 元组支持 rest elements, 好处是使得 ts 能用元组描述 parameter list
+   1. `...args: [string, number, ...boolean[]]` === `name: string, version: number, ...input: boolean[]`
+
+### readonly Tuple Type
+1. `readonly [Type1, Type2]`
+2. `let val = [value1, value2] as const`
