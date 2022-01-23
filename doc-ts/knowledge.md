@@ -314,3 +314,89 @@ interface Box<Type> {
 ### readonly Tuple Type
 1. `readonly [Type1, Type2]`
 2. `let val = [value1, value2] as const`
+
+## Type Manipulation - Creating Type from Types
+> ts allow expressing types in terms of other types
+
+### Generics
+
+#### Hello World of Generics
+``` ts
+function identity<T>(arg: T): T {
+   return arg;
+}
+```
+1. 使用方法
+   1. pass all of the arguments, including the type argument: `let output = identity<string>("myString");`
+   2. use type argument inference: `let output = identity("myString");`
+
+#### Working with Generic Type Variables
+1. 代表任何类型
+2. 可以缩小泛型的所指范围, 并跟据这个小范围拓展成大范围
+
+#### Generic Types
+1. generic functions
+   1. `function fun<T>(arg: T): T {}`
+   2. `<T>(arg: T) => T;`
+   3. `{<T>(arg: T): T}` (call signature)
+2. generic interface
+   1. `interface Fn { <T>(arg: T): T }`
+   2. `interface Fn<T> { (arg: T): T }`
+3. Note that it is not possible to create generic enums and namespaces.
+4. generic class
+   1. `class Ca<T> { arg: T; }`
+   2. class 具有两面: static side, instance side; 而 generic class 仅 cover the instance side, not the static side
+   
+#### Generic Constraints
+> want to write a generic function that works on a set of types where you have some knowledge about what capabilities that set of types will have.
+1. generic 意味 any and all types, 可以对其约束: `<T extends {length: number}>`
+2. Using Type Parameters in Generic Constraints: You can declare a type parameter that is constrained by another type parameter:
+   1. <T, K extends keyof T>
+
+#### Using Class Types in Generics
+1. `interface ConFn<T> {new (...args: Array<any>): T;}`
+2. 注意, class 作为类型
+
+### The keyof Type Operator
+1. The keyof operator takes an object type and produces a string or numeric **literal union** of its keys: `keyof P` => `'x' | 'y'`
+2. 如果 keyof Type 中的这个 Type 有 index signature:
+   1. `[prop: number]` => `number`
+   2. `[prop: string]` => `number | string`
+
+### Typeof Type Operator
+1. TypeScript adds a typeof operator you can use in a **type context** to refer to the type of a variable or property: `let str = ''; typeof str` => `string`
+   1. ps. 注意区分这里 type context, 与之相对的是 expression context
+   2. 基本类型定义的时候如果用了 const, 会被认为是字面量类型
+2. typeof 用在复杂类型上比较有用
+3. ts 限制了 typeof 表达式, 仅适用于标识符与标识符的属性 (identifiers of their properties)
+
+### Indexed Access Types
+1. We can use an indexed access type to look up a specific property on another type: `type OneType = AnotherType[key]`
+2. the indexing type is itself a type:
+   1. union: `typeof Person["age" | "name"]` => `string | number`
+   2. keyof: `typeof Person[keyof Person]` => 相当于 `typeof Person["age" | "name" | ...]`, 因为 keyof 返回的是字面量 union
+   3. number: `typeof myArray[number]` => 取出 Array 的元素的值
+3. 注意, indexing 的时候, 只能是 type, 不能是变量
+
+### Conditional Types
+1. Definition: Conditional types take a form that looks a little like conditional expressions (condition ? trueExpression : falseExpression) in JavaScript: `SomeType extends OtherType ? TrueType : FalseType;`
+2. Conditional Type Constraints: 就是基本的形式, 在第一段使用 extends
+3. Inferring Within Conditional Types: 多使用了一个泛型, 但不是作为类型参数
+4. Distributive Condition Types: 遵循分配律的条件类型, When conditional types act on a generic type, they become distributive when given a union type; To avoid that behavior, you can surround each side of the extends keyword with square brackets.
+
+### Mapped Types
+1. mapped types build on the index signature.
+2. a mapped type is a generic type which uses a union of PropertyKeys (frequently create via a keyof) to iterate through keys to create type: `type  OptionsFlags<Type> = { [Property in keyof Type]: boolean; };`
+3. Mapping Modifiers: can remove of add `readonly` and `?` by prefixing with `-` or `+`
+4. Key Remapping via as: re-map keys in mapped types with an as clause in a mapped type: `type MappedTypeWithNewProperties<T> = { [P in keyof T as NewKeyType]: T[P]; }`
+5. Further Exploration: 没啥说的, 就是一个例子, mapped type 可以和 conditional type work well
+
+### Template Literal Types
+1. Template literal types build on string literal types, 模板字面量类型是基于字符串字面量类型的
+2. When a union is used in the interpolated position, the type is the set of every possible string literal that could be represented by each union member, 即: 如果插值处使用了 union, 这个类型也是 union, 如: `` type X = `${A | B}_id`; ``, 而且,  the unions are cross multiplied (交叉相乘)
+3. String Unions in Types: 一个很 fancy 的例子
+4. Intrinsic String Manipulation Types:
+   1. Uppercase
+   2. Lowercase
+   3. Capitalize
+   4. Uncapitalize
