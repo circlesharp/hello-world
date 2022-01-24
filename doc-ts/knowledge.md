@@ -512,3 +512,48 @@ function identity<T>(arg: T): T {
 1. 如果两个 class 是等价的, 可以互换乱用
 2. 类似地, 如果只是字段多寡, 被看作是 subtype, 不管是否显式地继承
 3. empty class 会被认为是 supertype of anything else (请不要这么做)
+
+## Modules
+### How JavaScript Modules are Defined
+1. any file containing a top-level import or export is considered a module. 包含顶级的导入和导出的文件都被认为是 module
+2. 反之, (without an export or top-level await) 会被认为是 script, 它的内容是全局可得的(is treated as a script whose contents are available in the global scope)
+3. Modules are executed within their own scope, not in the global scope. Module 拥有自己的作用域
+
+### Non-modules
+不是很懂说什么. non-modules 是否和 script 等价呢
+
+### Modules in TypeScript
+> 需要关注 3 个重点:
+> 1. Syntax
+> 2. Module Resolution
+> 3. Module Output Target
+
+#### ES Module Syntax
+1. A file can declare a main export via export default: `export default function xx() {}`, This is then imported via: `import xx from "./xx.js";`
+2. you can have more than one export of variables and functions via the export by omitting default; These can be used in another file via the import syntax: `import {xx, yy} from "./xx.js";`
+3. An import can be renamed using a format like import {old as new}: `import { pi as π } from "./maths.js";`
+4. You can mix and match the above syntax into a single import: `import xx, { pi as π } from "./maths.js"`
+5. You can take all of the exported objects and put them into a single namespace using * as name: `import * as math from "./maths.js";`
+6. You can import a file and not include any variables into your current module via import "./file", 但是代码会执行, 从而产生副作用
+7. Types can be exported and imported using the same syntax as JavaScript values
+8. TypeScript has extended the import syntax with two concepts for declaring an import of a type:
+   1. import type
+   2. Inline type imports: `import { createCatName, type Cat, type Dog } from "./animal.js"`
+9. ES Module Syntax with CommonJS Behavior: 没看懂
+
+#### CommonJS Syntax
+1. Identifiers are exported via setting the exports property on a global called module: `module.exports = { pi: 3.14 }`; Then these files can be imported via a require statement: `const maths = require("maths");` or `const { pi } = require("maths");`
+
+#### TypeScript’s Module Resolution Options
+1. Module resolution is the process of taking a string from the import or require statement, and determining what file that string refers to.
+2. TypeScript includes two resolution strategies: Classic and Node. 
+   1. Classic, the default when the compiler option module is not commonjs, is included for backwards compatibility. 
+   2. The Node strategy replicates how Node.js works in CommonJS mode, with additional checks for .ts and .d.ts.
+
+#### TypeScript’s Module Output Options
+1. There are two options which affect the emitted JavaScript output:
+   1. target: determines which JS features are downleveled (converted to run in older JavaScript runtimes) and which are left intact
+   2. module: determines what code is used for modules to interact with each other
+
+### TypeScript namespaces
+todo
