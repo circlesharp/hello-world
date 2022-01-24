@@ -400,3 +400,115 @@ function identity<T>(arg: T): T {
    2. Lowercase
    3. Capitalize
    4. Uncapitalize
+
+## Classes
+
+### Class Members
+1. Field: A field declaration creates a public writeable property on a class
+   1. the type annotation is optional;
+   2. Fields can also have initializers;
+   3. `--strictPropertyInitialization`, ts 不会根据 constructor 的函数调用推断该字段是否初始化, 因为可能会被覆盖, 可以使用 `!` (definite assignment assertion operator)
+   4. readonly: readonly modifier
+2. Constructors: 和函数类似
+   1. 支持 overload, 但是:
+      1. Constructors can’t have type parameters: 类型参数依赖外层的 class declaration
+      2. Constructors can’t have return type annotations: 返回值用于是这个 class 的实例
+   2. Super Calls
+3. Methods: 没啥特别的
+4. Getters / Setters: Classes can also have accessors (对象也有)
+   1. 如果有 get 但无 set, 会被认为是 readonly
+   2. 如果 set 的参数未指定类型, 会推断为 get 返回值的类型
+   3. getters 和 setters 必须有相同的 Member Visibility
+   4. 允许 getters 和 setters 拥有不同的类型
+5. Index Signatures: 和对象类型一样, 但是因为需要顾及 method, 这个并不常用
+   
+### Class Heritage
+> classes in JavaScript can inherit form base classes.
+1. implements Clauses: 去检查一个类型是否满足 interface
+   1. 可以 implement 一个或多个 interface
+   2. 注意, implements clause is only a check that the class can be treated as the interface type, implements clauses don’t change how the class body is checked or its type inferred. (有点奇怪: 可以理解的是 implement 不会改变 type of class, 但是理解不了为啥不能推断类型?)
+2. extends Clauses: A derived class has all the properties and methods of its base class, and also define additional members.
+   1. Overriding Methods
+      1. 使用 `super.` 去获取 base class methods
+      2. derived class 需要 follow its base class contract
+   2. Type-only Field Declarations
+      1. 当 `--useDefineForClassFields`, class fields 会在父类 constructor 完成后初始化, 重写父类设置的值 (理解不了有啥意义)
+   3. Initialization Order
+      1. The base class fields are initialized
+      2. The base class constructor runs
+      3. The derived class fields are initialized
+      4. The derived class constructor runs
+   4. Inheriting Built-in Types
+      1. 像 Error, Array 等, 用了 es6 的新特性 `new.target`, 如果编译成 es5 代码将不兼容
+      2. 手动适配: `Object.setPrototypeOf(this, ConName.prototype)` 或 `this.__proto__ = ConName.prototype`
+
+### Member Visibility
+> control whether certain methods or properties are visible to code outside the class.
+> 对于 class 之外, 本属性或方法是否可见
+1. public: A public member can be accessed anywhere.
+2. protected: protected members are only visible to subclasses of the class they’re declared in.
+   1. Exposure of protected members: 如果派生类没有标注 visibility modifier, 将会被认为是 public
+   2. Cross-hierarchy protected access: 通过 base class 的引用去方位 protected 是不合法的
+3. private: does not allow access to the member even from subclasses.
+   1. Because private members aren’t visible to derived classes, a derived class can’t increase its visibility 派生类不能让 private 属性变成 public, 甚至去重写也不行
+   2. Cross-instance private access: different instances of the same class cannot access each others’ private members: 同类型的不同实例不能访问对方的 private
+   3. caveats:
+      1. private and protected are only enforced during type checking.
+      2. soft private: private also allows access using bracket notation during type checking: `s["secretKey"]` - ok, `s.secretKey` - wrong, 这是为了方便单元测试
+      3. hard private: js `#` (private fields) 实现了 hard private, 如果编译成低版本, 会使用 WeakMaps 来实现
+
+### Static Members
+1. Static members 与实例无关, 可以通过构造函数(class constructor object)本身来访问
+2. Static members can also use the same public, protected, and private visibility modifiers
+3. Static members are also inherited
+4. Special Static Names: 不能使用 `name, length, call...` 等函数属性名
+5. Why No Static Classes: A class with only a single instance is typically just represented as a normal object in JavaScript/TypeScript.
+
+### static Blocks in Classes
+1. static block 允许写一系列的语句, 有独立的作用域, 且能访问 private fields
+2. This means that we can write initialization code with all the capabilities of writing statements, no leakage of variables, and full access to our class’s internals.
+
+### Generic Classes
+1. 用法类似 interface, function
+2. The static members of a generic class can never refer to the class’s type parameters.
+
+### this at Runtime in Classes
+> TypeScript provides some ways to mitigate or prevent this kind of error.
+1. Arrow Functions: `class xx {methodName = () => {}}`
+   1. loses its this context
+   2. trade-offs:
+      1. this 的值永远都是确定的, 即使没有 ts 的类型检查
+      2. 会用更多的内存, 因为每个实例都有这个函数的副本
+      3. 不能使用 `super.` 访问这个方法, 因为不在原型链上
+2. this parameter: method 或者 function 的定义上, this 是 ts 的特殊参数, 在编译后会自动去掉
+   1. ts 用于检查上下文(context)是否正确
+   2. trade-offs:
+      1. 对 js 没有意义
+      2. 一次指定仅对一个方法有效, 并非整个实例
+      3. 仍可以通过 `super.` 引用 base method
+
+### this Types
+1. this 可以用作参数的类型注解, 在派生类中, 与使用 className 作为类型注解是不同的
+2. this-based type guards: 
+   1. `this is Type` in the return position for methods in classes and interfaces.
+   2. use-case: lazy validation of a particular field
+
+### Parameter Properties
+1. TypeScript offers special syntax for turning a constructor parameter into a class property with the same name and value
+2. 须携带 visibility modifiers: created by prefixing a constructor argument with one of the visibility modifiers public, private, protected, or readonly.
+
+### Class Expressions
+1. `const SomeClass = class {}`
+2. 类表达式不需要给类设置名字, 最终会参照绑定到的标识符
+
+### abstract Classes and Members
+1. Classes, methods, and fields in TypeScript may be abstract.
+2. abstract method 或 abstract field 是尚未提供实现的 (hasn’t had an implementation provided), 必须存在于 abstract class 里面
+3. abstract class 不能直接被实例化(编译出来的是一个空类, 如果全部字段, 方法都是抽象的话)
+4. Abstract Construct Signatures: `Ctor: new () => AbstractClass` 描述这是一个实现抽象类的构造函数
+
+### Relationships Between Classes
+得益于结构化类型系统(structural type system):
+1. 如果两个 class 是等价的, 可以互换乱用
+2. 类似地, 如果只是字段多寡, 被看作是 subtype, 不管是否显式地继承
+3. empty class 会被认为是 supertype of anything else (请不要这么做)
