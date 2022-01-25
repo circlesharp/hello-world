@@ -20,6 +20,17 @@ function isStringValidatable(validatableInput: StrValidatable | NumValidatable):
   return typeof validatableInput.value === 'string';
 }
 
+interface Draggable {
+  dragStartHandler(event: DragEvent): void;
+  dragEndHandler(event: DragEvent): void;
+}
+
+interface DragTarget {
+  dragOverHandler(event: DragEvent): void;
+  dropHandler(event: DragEvent): void;
+  dragLeaveHandler(event: DragEvent): void;
+}
+
 function validate(validatableInput: StrValidatable | NumValidatable): boolean {
   let isValid = true;
   if (validatableInput.required) {
@@ -108,6 +119,19 @@ class ProjectState extends State<Project> {
       ProjectStatus.ACTIVE,
     ));
 
+    this.updateListers();
+  }
+
+  moveProject(projectId: string, newStatus: ProjectStatus) {
+    const project = this.projects.find(prj => prj.id === projectId);
+    if (project && project.status !== newStatus) {
+      project.status = newStatus;
+    }
+
+    this.updateListers();
+  }
+
+  private updateListers() {
     for (const listenerFn of this.listeners) {
       listenerFn([...this.projects]);
     }
@@ -151,7 +175,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
   private project: Project;
 
   get persons(): string {
@@ -173,18 +197,33 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     this.project = project;
 
     this.configure();
+    this.renderContent();
   }
 
   configure(): void {
+    this.element.addEventListener('dragstart', this.dragStartHandler);
+    this.element.addEventListener('dragend', this.dragEndHandler);
+  }
+
+  renderContent(): void {
     this.element.querySelector('h2')!.textContent = this.project.title;
     this.element.querySelector('h3')!.textContent = `${this.persons} assigned`;
     this.element.querySelector('p')!.textContent = this.project.description;
   }
 
-  renderContent(): void { }
+  @autoBind
+  dragStartHandler(event: DragEvent): void {
+    event.dataTransfer!.setData('text/plain', this.project.id);
+    event.dataTransfer!.effectAllowed = 'move';
+  }
+
+  @autoBind
+  dragEndHandler(event: DragEvent): void {
+
+  }
 }
 
-class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget {
   assignedProjects: Array<Project> = [];
 
   constructor(
@@ -208,12 +247,38 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
       this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
+
+    this.element.addEventListener('dragover', this.dragOverHandler);
+    this.element.addEventListener('drop', this.dropHandler);
+    this.element.addEventListener('dragleave', this.dragLeaveHandler);
   }
 
   renderContent() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector('ul')!.id = listId;
     this.element.querySelector('h2')!.textContent = `${this.type.toUpperCase()} PROJECTS`;
+  }
+
+  @autoBind
+  dragOverHandler(event: DragEvent): void {
+    // 验证是否合法 (ps. 其实可以更加精准)
+    if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+      event.preventDefault(); // 这么理解: js 的 default 就是禁止 drop
+      const listEl = this.element.querySelector('ul')!;
+      listEl.classList.add('droppable');
+    }
+  }
+
+  @autoBind
+  dropHandler(event: DragEvent): void {
+    const prjId = event.dataTransfer!.getData('text/plain');
+    projectState.moveProject(prjId, this.type);
+  }
+
+  @autoBind
+  dragLeaveHandler(event: DragEvent): void {
+    const listEl = this.element.querySelector('ul')!;
+    listEl.classList.remove('droppable');
   }
 
   private renderProjects() {
@@ -240,6 +305,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     );
 
     this.configure();
+    this.renderContent();
   }
 
   configure() {
@@ -250,7 +316,11 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     this.element.addEventListener('submit', this.submitHandler);
   }
 
-  renderContent() { }
+  renderContent() {
+    this.titleInputElement.value = 'test_title';
+    this.descriptionInputElement.value = 'test_description';
+    this.peopleInputElement.value = '4';
+  }
 
   @autoBind
   private submitHandler(event: Event) {
