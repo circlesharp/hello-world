@@ -56,6 +56,113 @@ function autoBind(_: any, __: string, descriptor: PropertyDescriptor) {
   return newDescriptor;
 }
 
+enum ProjectStatus {
+  ACTIVE = 'ACTIVE',
+  FINISHED = 'FINISHED',
+}
+
+type Listener = (items: Array<Project>) => void;
+
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus,
+  ) { }
+}
+
+
+class ProjectState {
+  private listeners: Array<Listener> = [];
+  private projects: Array<Project> = [];
+  private static instance: ProjectState;
+
+  private constructor() { } // singleton
+
+  static getInstance() {
+    if (!ProjectState.instance) {
+      ProjectState.instance = new ProjectState();
+    }
+
+    return ProjectState.instance;
+  }
+
+  addListener(listenerFn: Listener) {
+    this.listeners.push(listenerFn);
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    this.projects.push(new Project(
+      Math.random().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.ACTIVE,
+    ));
+
+    for (const listenerFn of this.listeners) {
+      listenerFn([...this.projects]);
+    }
+  }
+}
+
+// singleton
+const projectState = ProjectState.getInstance();
+
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLElement;
+  assignedProjects: Array<Project> = [];
+
+  constructor(
+    private type: ProjectStatus,
+  ) {
+    this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
+    this.hostElement = document.getElementById('app')! as HTMLDivElement;
+
+    const importedNode: DocumentFragment = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLElement;
+    this.element.id = (`${type}-projects`).toLowerCase();
+
+    // 注册事件, 每当这个全局单例 projectState 有变化, 自动调用
+    projectState.addListener((projects: Array<Project>) => {
+      const relevantProjects = projects.filter(prj => prj.status === this.type)
+      this.assignedProjects = relevantProjects;
+      this.renderProjects();
+    });
+
+    this.attach();
+    this.renderContent();
+  }
+
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('h2')!.textContent = `${this.type.toUpperCase()} PROJECTS`;
+  }
+
+  private renderProjects() {
+    const listId = `${this.type}-projects-list`;
+    const listEl = document.getElementById(listId)! as HTMLUListElement;
+    listEl.innerHTML = '';
+    for (const prjItem of this.assignedProjects) {
+      const listItem = document.createElement('li');
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement('beforeend', this.element);
+  }
+}
+
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
@@ -98,8 +205,10 @@ class ProjectInput {
     const userInput = this.gatherUserInput();
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput;
-      console.log(title, desc, people);
-      this.clearInputs();
+
+      // 改变全局单例 projectState 的状态
+      projectState.addProject(title, desc, people);
+      // this.clearInputs();
     }
   }
 
@@ -144,3 +253,5 @@ class ProjectInput {
 }
 
 const prjInput = new ProjectInput();
+const activePrjList = new ProjectList(ProjectStatus.ACTIVE);
+const finishedPrjList = new ProjectList(ProjectStatus.FINISHED);
