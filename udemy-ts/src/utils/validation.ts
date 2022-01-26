@@ -1,4 +1,4 @@
-import { isStringValidatable, type NumValidatable, type StrValidatable } from "../models/validatable.js";
+import { isStringValidatable, type NumValidatable, type StrValidatable } from "../models/validatable";
 
 export function validate(validatableInput: StrValidatable | NumValidatable): boolean {
   let isValid = true;

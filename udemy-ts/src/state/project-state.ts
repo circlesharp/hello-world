@@ -1,4 +1,4 @@
-import { Project, ProjectStatus } from "../models/project.js";
+import { Project, ProjectStatus } from "../models/project";
 
 abstract class State<T> {
   protected listeners: Array<Listener<T>> = [];
