@@ -19,7 +19,7 @@ const MeetupItem: React.FC<{ item: Meetup }> = (props) => {
         </div>
 
         <div className={style.actions}>
-          <button>To Favorites</button>
+          <button className='btn'>To Favorites</button>
         </div>
       </Card>
     </li>
