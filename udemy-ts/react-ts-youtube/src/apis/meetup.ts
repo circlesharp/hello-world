@@ -1,4 +1,3 @@
-import { title } from 'process';
 import { Meetup } from '../models/Meetup';
 
 const BASE_URI =
@@ -37,6 +36,7 @@ export async function getMeetups(): Promise<Array<Meetup>> {
         meetups = Object.keys(data).map((key) => {
           const item = data[key] as Partial<Meetup>;
           return new Meetup(
+            item.id,
             item.title,
             item.image,
             item.address,

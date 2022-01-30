@@ -7,10 +7,16 @@ export class Meetup {
 
   private images: Array<string> = [];
 
-  constructor(title?: string, image?: string, address?: string, desc?: string) {
+  constructor(
+    id?: string,
+    title?: string,
+    image?: string,
+    address?: string,
+    desc?: string
+  ) {
     this.genImages();
 
-    this.id = Math.random().toString();
+    this.id = id || Math.random().toString();
     this.title = title || `title_${this.id.slice(2, 6)}`;
     this.image = image || this.getImage();
     this.address = address || `address_${this.id.slice(2, 6)}`;

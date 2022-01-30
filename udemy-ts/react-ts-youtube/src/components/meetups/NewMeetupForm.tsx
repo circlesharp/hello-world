@@ -16,6 +16,7 @@ const NewMeetupForm: FC<NewMeetupFormProps> = (props) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     const newMeetup = new Meetup(
+      undefined,
       titleInputRef.current!.value,
       imageInputRef.current!.value,
       addressInputRef.current!.value,
