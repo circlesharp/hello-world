@@ -23,6 +23,16 @@ export class Meetup {
     this.description = desc || `desc_${this.id.slice(2, 6)}`;
   }
 
+  public toPlain() {
+    return {
+      id: this.id,
+      title: this.title,
+      image: this.image,
+      address: this.address,
+      description: this.description,
+    };
+  }
+
   private genImages() {
     this.images.push(
       ...[
