@@ -1,29 +1,33 @@
+import { useRouter } from 'next/router';
 import React, { FC, FormEvent, useRef } from 'react';
+import httpMeetup from '../../api/meetup';
 import { Meetup } from '../../models/Meetup';
 import Card from '../ui/Card';
 import style from './NewMeetupForm.module.scss';
 
-interface NewMeetupFormProps {
-  onAddMeetup: (newMeetup: Meetup) => void;
-}
+const NewMeetupForm: FC = () => {
+  const router = useRouter();
 
-const NewMeetupForm: FC<NewMeetupFormProps> = (props) => {
   const titleInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const descInputRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const newMeetup = new Meetup(
-      undefined,
-      titleInputRef.current!.value,
-      imageInputRef.current!.value,
-      addressInputRef.current!.value,
-      descInputRef.current!.value
-    );
+    const newMeetup: Meetup = {
+      title: titleInputRef.current!.value,
+      image: imageInputRef.current!.value,
+      address: addressInputRef.current!.value,
+      description: descInputRef.current!.value,
+    };
 
-    props.onAddMeetup(newMeetup);
+    try {
+      httpMeetup.addMeetup(newMeetup);
+      router.push('/');
+    } catch (error) {
+      //
+    }
   };
 
   return (

@@ -10,7 +10,7 @@ const MeetupItem: React.FC<{ item: Meetup }> = (props) => {
   const router = useRouter();
 
   const toDetailPage = () => {
-    router.push(`/detail/${props.item.id}`);
+    router.push(`/detail/${props.item._id}`);
   };
 
   return (

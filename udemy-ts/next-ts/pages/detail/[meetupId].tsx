@@ -1,6 +1,8 @@
+import { ObjectId } from 'mongodb';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import MeetupDetailComp from '../../components/meetups/MeetupDetail';
 import { Meetup } from '../../models/Meetup';
+import { getMeetupsCollection } from '../api/helpers';
 
 interface MeetupDetailProps {
   item: Meetup;
@@ -11,28 +13,50 @@ const MeetupDetail: NextPage<MeetupDetailProps> = (props) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [
-      {
-        params: {
-          meetupId: '123',
-        },
+  let paths: Array<{ params: { meetupId: string } }> = [];
+  const { client, collection } = await getMeetupsCollection();
+  try {
+    const objectIds = await collection
+      .find<{ _id: ObjectId }>({}, { projection: { _id: 1 } })
+      .toArray();
+    paths = objectIds.map((i) => ({
+      params: {
+        meetupId: i._id.toString(),
       },
-    ],
-    fallback: true,
+    }));
+  } catch (e) {}
+
+  client.close();
+
+  return {
+    paths,
+    fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps<MeetupDetailProps> = async (
   context
 ) => {
-  console.log(2444, context);
   const { meetupId } = context!.params!;
-  const meetupTest = new Meetup(meetupId as string);
+  const { client, collection } = await getMeetupsCollection();
+  let item!: Meetup;
+
+  try {
+    const resp = await collection.findOne<Meetup>({
+      _id: new ObjectId(meetupId as string),
+    });
+
+    if (resp) {
+      item = resp;
+      item._id = resp?._id?.toString();
+    }
+  } catch (e) {}
+
+  client.close();
 
   return {
     props: {
-      item: meetupTest.toPlain() as Meetup,
+      item,
     },
     revalidate: 10,
   };

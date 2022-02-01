@@ -8,7 +8,7 @@ const MeetupList: React.FC<{ items: Array<Meetup> }> = (props) => {
   return (
     <ul className={style.list}>
       {props.items.map((item) => (
-        <MeetupItem item={item} key={item.id} />
+        <MeetupItem item={item} key={item._id} />
       ))}
     </ul>
   );

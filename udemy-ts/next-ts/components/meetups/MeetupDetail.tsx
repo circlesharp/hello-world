@@ -12,7 +12,7 @@ const MeetupDetailComp: NextPage<{ item: Meetup }> = (props) => {
         width={160}
         height={160}
       ></Image>
-      <h1>{props.item.id}</h1>
+      <h1>{props.item._id}</h1>
       <address>{props.item.address}</address>
       <p>{props.item.description}</p>
     </section>
