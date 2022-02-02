@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import Head from 'next/head';
+import { Fragment } from 'react';
 import MeetupDetailComp from '../../components/meetups/MeetupDetail';
 import { Meetup } from '../../models/Meetup';
 import { getMeetupsCollection } from '../api/helpers';
@@ -9,7 +11,15 @@ interface MeetupDetailProps {
 }
 
 const MeetupDetail: NextPage<MeetupDetailProps> = (props) => {
-  return <MeetupDetailComp item={props.item}></MeetupDetailComp>;
+  return (
+    <Fragment>
+      <Head>
+        <title>{props.item.title}</title>
+        <meta name='description' content={props.item.description}></meta>
+      </Head>
+      <MeetupDetailComp item={props.item}></MeetupDetailComp>;
+    </Fragment>
+  );
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -30,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 

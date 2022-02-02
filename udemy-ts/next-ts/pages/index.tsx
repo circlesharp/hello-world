@@ -1,4 +1,6 @@
 import type { GetStaticProps, NextPage } from 'next';
+import Head from 'next/head';
+import { Fragment } from 'react';
 import MeetupList from '../components/meetups/MeetupList';
 import { Meetup } from '../models/Meetup';
 import { getMeetupsCollection } from './api/helpers';
@@ -8,7 +10,15 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = (props) => {
-  return <MeetupList items={props.items}></MeetupList>;
+  return (
+    <Fragment>
+      <Head>
+        <title>TS Next Meetups</title>
+        <meta name='description' content='TS Next Meetups, Rongzhao Tan'></meta>
+      </Head>
+      <MeetupList items={props.items}></MeetupList>;
+    </Fragment>
+  );
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
@@ -27,7 +37,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     props: {
       items: meetups,
     },
-    revalidate: 10,
+    revalidate: 30,
   };
 };
 
