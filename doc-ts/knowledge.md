@@ -662,3 +662,189 @@ function identity<T>(arg: T): T {
 ### TypeScript namespaces
 
 nothing
+
+## Utility Types
+
+> TS 提供了若干 utility types 去促进常用的类型转换(to facilitate common type transformations)
+
+### Partial<Type>
+
+1. Constructs a type with all properties of Type set to optional. 所有字段变成可选
+
+```ts
+type _Partial<Type> = {
+  [Property in keyof Type]?: Type[Property];
+};
+```
+
+### Required<Type>
+
+1. Constructs a type consisting of all properties of Type set to required. The opposite of Partial.
+
+```ts
+type _Required<Type> = {
+  // 不用 -? 也ok
+  [Property in keyof Type]-?: Type[Property];
+};
+```
+
+### Readonly<Type>
+
+1. Constructs a type with all properties of Type set to readonly, meaning the properties of the constructed type cannot be reassigned.
+2. 使用场景 `function freeze<Type>(obj: Type): Readonly<Type>;`
+
+```ts
+// 注意, 这里意味着 optional 失效
+type _Readonly<Type> = {
+  readonly [Property in keyof Type]: Type[Property];
+};
+```
+
+### Record<Keys, Type>
+
+1. Constructs an object type whose property keys are Keys and whose property values are Type.
+
+```ts
+type _Record<Keys extends keyof any, Type> = {
+  [P in Keys]: Type;
+};
+```
+
+### Pick<Type, Keys>
+
+1. Constructs a type by picking the set of properties Keys (string literal or union of string literals) from Type.
+
+```ts
+type _Pick<Type, Keys extends keyof Type> = {
+  [Property in Keys]: Type[Property];
+};
+```
+
+### Omit<Type, Keys>
+
+1. Constructs a type by picking all properties from Type and then removing Keys (string literal or union of string literals).
+
+```ts
+// 实现一
+// type _Omit<Type, Keys extends keyof any> = {
+//   [Property in _Exclude<keyof Type, Keys>]: Type[Property];
+// };
+
+// 实现二
+type _Omit<Type, Keys extends keyof any> = _Pick<
+  Type,
+  _Exclude<keyof Type, Keys>
+>;
+```
+
+### Exclude<UnionType, ExcludedTypes>
+
+1. Constructs a type by excluding from UnionType all union members that are assignable to ExcludedMembers.(取差集)
+
+```ts
+type _Exclude<UnionType, ExcludedMembers> = UnionType extends ExcludedMembers
+  ? never
+  : UnionType;
+```
+
+### Extract<Type, Union>
+
+1. Constructs a type by extracting from Type all union members that are assignable to Union.(取交集)
+
+```ts
+// 实现一
+// type _Extract<T, U> = T extends U ? T : never;
+
+// 实现二
+type _Extract<T, U> = U extends T ? U : never;
+```
+
+### NonNullable<Type>
+
+1. Constructs a type by excluding null and undefined from Type. (剔除 undefined, null)
+
+```ts
+// 实现一
+// type _NonNullable<Type> = Type extends null | undefined ? never : Type;
+
+// 实现二
+type _NonNullable<Type> = _Exclude<Type, undefined | null>;
+```
+
+### Parameters<Type>
+
+1. Constructs a tuple type from the types used in the parameters of a function type Type.
+
+```ts
+type _Parameters<Type extends (...args: any) => void> = Type extends (
+  ...args: infer P
+) => void
+  ? P
+  : never;
+```
+
+### ConstructorParameters<Type>
+
+1. Constructs a tuple or array type from the types of a constructor function type. It produces a tuple type with all the parameter types (or the type never if Type is not a function).
+
+```ts
+type _ConstructorParameters<Type extends abstract new (...args: any) => any> =
+  Type extends abstract new (...args: infer P) => any ? P : never;
+```
+
+### ReturnType<Type>
+
+1. Constructs a type consisting of the return type of function Type.
+
+```ts
+type _ReturnType<Type extends (...args: any) => any> = Type extends (
+  ...args: any
+) => infer R
+  ? R
+  : any;
+```
+
+### InstanceType<Type>
+
+1. Constructs a type consisting of the instance type of a constructor function in Type.
+
+```ts
+type _InstanceType<T extends abstract new (...args: any) => any> =
+  T extends abstract new (...args: any) => infer R ? R : any;
+```
+
+### ThisParameterType<Type>
+
+1. Extracts the type of the this parameter for a function type, or unknown if the function type has no this parameter.
+
+```ts
+// 注意, 传入的泛型参数不要求是函数
+type _ThisParameterType<Type> = Type extends (this: infer P) => void
+  ? P
+  : unknown;
+```
+
+### OmitThisParameter<Type>
+
+1. Removes the this parameter from Type. If Type has no explicitly declared this parameter, the result is simply Type.
+2. Otherwise, a new function type with no this parameter is created from Type.
+3. Generics are erased and only the last overload signature is propagated into the new function type.
+
+```ts
+// 逻辑很绕, ThisParameterType 的类型有可能是 unknown
+type _OmitThisParameter<Type> = unknown extends ThisParameterType<Type>
+  ? T
+  : Type extends (...args: infer P) => infer R
+  ? (...args: P) => R
+  : T;
+```
+
+### ThisType<Type>
+
+1. This utility does not return a transformed type. Instead, it serves as a marker for a contextual this type.
+2. 指明了这个对象是 "上下文 this 类型"
+
+```ts
+// 注意, 不可实现的, 并不是被转换的类型
+// interface ThisType<Type> {}
+```
