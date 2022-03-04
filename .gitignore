@@ -3,6 +3,7 @@ build
 dist
 .next
 .expo
+yarn.lock
 
 *.jks
 *.p8
