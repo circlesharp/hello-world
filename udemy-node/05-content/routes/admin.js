@@ -5,7 +5,9 @@ const db = require('../db/index');
 const router = express.Router();
 
 router.get('/add-product', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../views/add-product.html'));
+  res.render('add-product', {
+    route: 'add-product',
+  });
 });
 
 router.post('/add-product', (req, res, next) => {

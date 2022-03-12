@@ -6,6 +6,9 @@ const shopRoutes = require('./routes/shop');
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', 'views/pug');
+
 app.use(bodyParser.urlencoded());
 
 // Serving files statically

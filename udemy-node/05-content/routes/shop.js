@@ -6,8 +6,12 @@ const db = require('../db/index');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  console.log(db.getAllProducts());
-  res.sendFile(path.resolve(__dirname, '../views/shop.html'));
+  const products = db.getAllProducts();
+  res.render('shop', {
+    products,
+    docTitle: 'My Shop',
+    route: 'shop',
+  });
 });
 
 module.exports = router;
