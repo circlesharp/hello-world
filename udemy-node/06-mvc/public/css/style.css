@@ -1,0 +1,11 @@
+nav li {
+  display: inline-block;
+}
+
+nav li + li {
+  margin-left: 5px;
+}
+
+a.active {
+  font-weight: bold;
+}
