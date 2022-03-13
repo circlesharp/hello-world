@@ -1,11 +1,12 @@
-const db = require('../db/index');
+const Product = require('../models/product');
 
 const getProductsPage = (req, res) => {
-  const products = db.getAllProducts();
-  res.render('shop', {
-    products,
-    docTitle: 'My Shop',
-    route: 'shop',
+  Product.fetchAll((products) => {
+    res.render('shop', {
+      products,
+      docTitle: 'My Shop',
+      route: 'shop',
+    });
   });
 };
 
@@ -17,8 +18,12 @@ const getAddProductPage = (req, res) => {
 
 const postAddProduct = (req, res, next) => {
   const name = req?.body?.name;
-  db.addProduct({ name });
-  res.redirect('/');
+  const product = new Product({ name });
+  product.save((err) => {
+    if (!err) {
+      res.redirect('/');
+    }
+  });
 };
 
 module.exports = { getProductsPage, getAddProductPage, postAddProduct };

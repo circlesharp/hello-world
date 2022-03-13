@@ -1,6 +1,6 @@
 const PRODUCTS = 'products';
 
-class DB {
+class DBMemory {
   dataBase = new Map();
 
   constructor() {
@@ -17,4 +17,4 @@ class DB {
   }
 }
 
-module.exports = new DB();
+module.exports = new DBMemory();
