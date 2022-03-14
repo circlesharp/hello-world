@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const PRODUCTS_FILE_PATH = path.resolve(__dirname, './db_file/products.json');
+const PRODUCTS_FILE_PATH = path.resolve(__dirname, './products.json');
 
 class DBMemory {
   getAllProducts(cb) {
@@ -14,7 +14,13 @@ class DBMemory {
     this.getAllProducts((products) => {
       fs.writeFile(
         PRODUCTS_FILE_PATH,
-        JSON.stringify([...products, newProduct]),
+        JSON.stringify([
+          ...products,
+          {
+            ...newProduct,
+            id: Number.parseInt(String(Math.random() * 1000000000000)),
+          },
+        ]),
         (err) => cb(err)
       );
     });

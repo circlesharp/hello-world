@@ -1,8 +1,10 @@
 const db = require('../db/db-file');
 
 class Product {
-  constructor({ name }) {
+  constructor({ name, price, description = '' }) {
     this.name = name;
+    this.price = price;
+    this.description = description;
   }
 
   save(cb) {

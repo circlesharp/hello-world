@@ -6,14 +6,23 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     block title
     link(rel="stylesheet", href="/css/style.css")
+    block style
 
   body 
     header 
       nav 
         ul 
           li 
-            a(href="/", class=(route === 'shop' ? 'active' : '')) Shop
+            a(href="/", class=(route === 'index' ? 'active' : '')) Shop
+          li 
+            a(href="/products", class=(route === 'products' ? 'active' : '')) Products
+          li 
+            a(href="/cart", class=(route === 'cart' ? 'active' : '')) Cart
+          li 
+            a(href="/orders", class=(route === 'orders' ? 'active' : '')) Orders
           li
-            a(href="/add-product", class=(route === 'add-product' ? 'active' : '')) Add Product
+            a(href="/admin/add-product", class=(route === 'admin/add-product' ? 'active' : '')) Add Product
+          li
+            a(href="/admin/products", class=(route === 'admin/products' ? 'active' : '')) Admin Products
 
     block content

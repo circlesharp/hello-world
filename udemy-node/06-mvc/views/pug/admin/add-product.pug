@@ -1,0 +1,22 @@
+extends ../layouts/main-layout.pug
+
+block title
+  title Add Product
+
+block style
+  link(rel="stylesheet", href="/css/form.css")
+
+block content
+  main
+    form(action="/admin/add-product", method="POST") 
+      div.form-element
+        label(for="name") Name
+        input#name(type="text" name="name")
+      div.form-element
+        label(for="price") Price
+        input#price(type="number" name="price" step="0.01")
+      div.form-element
+        label(for="desc") Description
+        textarea#desc(name="description", cols="30", rows="10")
+      div.form-element
+        input(type="submit") 

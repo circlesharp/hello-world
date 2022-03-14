@@ -1,0 +1,18 @@
+.form-element {
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.form-element label {
+  display: inline-block;
+  width: 100px;
+}
+
+.form-element label::after {
+  content: ':';
+}
+
+input[type='submit'] {
+  padding: 10px 20px;
+}

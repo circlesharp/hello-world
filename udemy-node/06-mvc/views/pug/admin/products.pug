@@ -1,11 +1,11 @@
-extends layouts/main-layout.pug
+extends ../layouts/main-layout.pug
 
 block title
   title #{docTitle}
 
 block content
   main
-    h1 All Products 
+    h1 Admin Products 
     if products.length > 0
       ul
         each product of products

@@ -10,12 +10,12 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', 'views/pug');
 
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Serving files statically
 app.use(express.static(path.resolve(__dirname, 'public')));
 
-app.use(adminRoutes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 // '/' 是 default
