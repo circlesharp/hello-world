@@ -9,3 +9,7 @@ nav li + li {
 a.active {
   font-weight: bold;
 }
+
+product-item + product-item {
+  margin-left: 10px;
+}

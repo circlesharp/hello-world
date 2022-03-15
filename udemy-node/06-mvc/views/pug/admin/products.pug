@@ -6,10 +6,9 @@ block title
 block content
   main
     h1 Admin Products 
-    if products.length > 0
-      ul
+    section 
+      if products.length > 0
         each product of products
-          li #{product.name}
-    else
-      p no product
-    img(src="/image/Suzuha.jpeg", alt="avatar")
+          product-item(data-product=product)
+      else
+        p no product
