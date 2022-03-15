@@ -2,6 +2,7 @@ const express = require('express');
 const {
   getIndexPage,
   getProductsPage,
+  getProductDetailPage,
   getCartPage,
   getOrdersPage,
   getCheckoutPage,
@@ -13,6 +14,8 @@ const router = express.Router();
 router.get('/', getIndexPage);
 
 router.get('/products', getProductsPage);
+
+router.get('/product/:productId', getProductDetailPage);
 
 router.get('/cart', getCartPage);
 

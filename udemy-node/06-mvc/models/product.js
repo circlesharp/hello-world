@@ -12,7 +12,11 @@ class Product {
   }
 
   static fetchAll(cb) {
-    return db.getAllProducts(cb);
+    db.getAllProducts(cb);
+  }
+
+  static findOneById(id, cb) {
+    db.findProductsById(id, cb);
   }
 }
 

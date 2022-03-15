@@ -1,4 +1,10 @@
 class ProductItem extends HTMLElement {
+  static operations = [
+    { key: 'detail', text: 'Detail' },
+    { key: 'cart', text: 'Add to Card' },
+    { key: 'edit', text: 'Edit' },
+  ];
+
   constructor() {
     super();
 
@@ -49,16 +55,24 @@ class ProductItem extends HTMLElement {
   }
 
   setOperation() {
-    const operations = JSON.parse(this.dataset.operations || '[]');
+    const operations = JSON.parse(
+      this.dataset.operations ||
+        JSON.stringify(ProductItem.operations.map((i) => i.key))
+    );
+    const product = JSON.parse(this.dataset.product);
 
     const operationEle = document.createElement('div');
     operationEle.setAttribute('class', 'operation');
 
-    for (const operation of operations) {
+    for (const operationKey of operations) {
+      const operation = ProductItem.operations.find(
+        (i) => i.key === operationKey
+      );
       const btnEle = document.createElement('button');
-      btnEle.innerText = operation;
+      btnEle.innerText = operation.text;
       btnEle.dataset.type = 'operation';
-      btnEle.dataset.operation = operation;
+      btnEle.dataset.operation = operation.key;
+      btnEle.dataset.productId = product.id;
       operationEle.appendChild(btnEle);
     }
 

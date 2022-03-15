@@ -20,6 +20,16 @@ const getProductsPage = (req, res) => {
   });
 };
 
+const getProductDetailPage = (req, res) => {
+  const productId = req.params.productId;
+  Product.findOneById(productId, (product) => {
+    res.render('shop/product-detail', {
+      product,
+      route: 'products',
+    });
+  });
+};
+
 const getCartPage = (req, res) => {
   res.render('shop/cart', {
     docTitle: 'My Cart',
@@ -44,6 +54,7 @@ const getCheckoutPage = (req, res) => {
 module.exports = {
   getIndexPage,
   getProductsPage,
+  getProductDetailPage,
   getCartPage,
   getOrdersPage,
   getCheckoutPage,

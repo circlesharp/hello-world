@@ -3,10 +3,19 @@ const path = require('path');
 
 const PRODUCTS_FILE_PATH = path.resolve(__dirname, './products.json');
 
-class DBMemory {
+class DBFile {
   getAllProducts(cb) {
     fs.readFile(PRODUCTS_FILE_PATH, (err, fileContent) => {
       cb(err ? [] : JSON.parse(fileContent));
+    });
+  }
+
+  findProductsById(id, cb) {
+    fs.readFile(PRODUCTS_FILE_PATH, (err, fileContent) => {
+      const product = err
+        ? undefined
+        : JSON.parse(fileContent).find((p) => p.id === Number(id));
+      cb(product);
     });
   }
 
@@ -27,4 +36,4 @@ class DBMemory {
   }
 }
 
-module.exports = new DBMemory();
+module.exports = new DBFile();

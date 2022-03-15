@@ -1,12 +1,15 @@
 extends ../layouts/main-layout.pug
 
+block script
+  script(src="/js/shop/products.js", defer) 
+  
 block title
   title #{docTitle}
 
 block content
   main
     h1 All Products 
-    section 
+    section.products
       if products.length > 0
         each product of products
           product-item(data-product=product)

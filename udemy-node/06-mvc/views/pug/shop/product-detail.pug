@@ -1,0 +1,11 @@
+extends ../layouts/main-layout.pug
+
+block title
+  title Look! #{product.name}
+
+block content
+  main
+    h1 #{product.name}
+    p $ #{product.price}
+    p #{product.description}
+    
