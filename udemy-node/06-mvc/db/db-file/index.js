@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PRODUCTS_FILE_PATH = path.resolve(__dirname, './products.json');
+const CART_FILE_PATH = path.resolve(__dirname, './cart.json');
 
 class DBFile {
   getAllProducts(cb) {
@@ -10,12 +11,19 @@ class DBFile {
     });
   }
 
-  findProductsById(id, cb) {
-    fs.readFile(PRODUCTS_FILE_PATH, (err, fileContent) => {
-      const product = err
-        ? undefined
-        : JSON.parse(fileContent).find((p) => p.id === Number(id));
+  findProductById(id, cb) {
+    this.getAllProducts((products) => {
+      const product = products.find((p) => p.id === Number(id));
       cb(product);
+    });
+  }
+
+  findProductsByIds(ids, cb) {
+    this.getAllProducts((products) => {
+      const matchedProducts = products.filter((product) =>
+        ids.map((id) => Number(id)).includes(product.id)
+      );
+      cb(matchedProducts);
     });
   }
 
@@ -32,6 +40,18 @@ class DBFile {
         ]),
         (err) => cb(err)
       );
+    });
+  }
+
+  getCart(cb) {
+    fs.readFile(CART_FILE_PATH, (err, fileContent) => {
+      cb(err ? [] : JSON.parse(fileContent));
+    });
+  }
+
+  saveCart(cartItems, cb) {
+    fs.writeFile(CART_FILE_PATH, JSON.stringify(cartItems), (err) => {
+      cb(err, cartItems);
     });
   }
 }

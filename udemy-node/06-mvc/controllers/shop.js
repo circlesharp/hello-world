@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 const getIndexPage = (req, res) => {
   Product.fetchAll((products) => {
@@ -22,7 +23,7 @@ const getProductsPage = (req, res) => {
 
 const getProductDetailPage = (req, res) => {
   const productId = req.params.productId;
-  Product.findOneById(productId, (product) => {
+  Product.getProduct(productId, (product) => {
     res.render('shop/product-detail', {
       product,
       route: 'products',
@@ -31,9 +32,28 @@ const getProductDetailPage = (req, res) => {
 };
 
 const getCartPage = (req, res) => {
-  res.render('shop/cart', {
-    docTitle: 'My Cart',
-    route: 'cart',
+  Cart.getCart((cartItems) => {
+    ids = cartItems.map((prod) => prod.id);
+    Product.getProduct(ids, (products) => {
+      for (product of products) {
+        const qty = cartItems.find((item) => item.id === product.id).qty;
+        product.qty = qty;
+      }
+      res.render('shop/cart', {
+        docTitle: 'My Cart',
+        route: 'cart',
+        products,
+      });
+    });
+  });
+};
+
+const postCart = (req, res) => {
+  const { productId } = req.body;
+  Cart.addToCart(productId, (err, products) => {
+    if (!err) {
+      res.redirect('/cart');
+    }
   });
 };
 
@@ -56,6 +76,7 @@ module.exports = {
   getProductsPage,
   getProductDetailPage,
   getCartPage,
+  postCart,
   getOrdersPage,
   getCheckoutPage,
 };

@@ -15,8 +15,12 @@ class Product {
     db.getAllProducts(cb);
   }
 
-  static findOneById(id, cb) {
-    db.findProductsById(id, cb);
+  static getProduct(id, cb) {
+    if (Array.isArray(id)) {
+      db.findProductsByIds(id, cb);
+    } else {
+      db.findProductById(id, cb);
+    }
   }
 }
 

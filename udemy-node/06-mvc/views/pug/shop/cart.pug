@@ -6,3 +6,9 @@ block title
 block content
   main
     h1 My Cart
+    section.products
+      if products.length > 0
+        each product of products
+          product-item(data-product=product)
+      else
+        p no product

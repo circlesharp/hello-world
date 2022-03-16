@@ -8,4 +8,7 @@ block content
     h1 #{product.name}
     p $ #{product.price}
     p #{product.description}
+  form(action="/cart", method="post")
+    input(type="hidden", name="productId", value=product.id)
+    input(type="submit", value="Add to Cart")
     

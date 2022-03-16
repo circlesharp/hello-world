@@ -1,1 +1,14 @@
-[{"name":"circlesharp","price":"23","description":"Good guy!","id":680271656285},{"name":"drink","price":"2.01","description":"Drink for everyone!","id":885802725102}]
+[
+  {
+    "name": "circlesharp",
+    "price": "23",
+    "description": "Good guy!",
+    "id": 680271656285
+  },
+  {
+    "name": "drink",
+    "price": "2.01",
+    "description": "Drink for everyone!",
+    "id": 885802725102
+  }
+]
