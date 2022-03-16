@@ -1,8 +1,9 @@
 class ProductItem extends HTMLElement {
   static operations = [
     { key: 'detail', text: 'Detail' },
-    { key: 'cart', text: 'Add to Card' },
+    { key: 'cart', text: 'Add to Cart' },
     { key: 'edit', text: 'Edit' },
+    { key: 'remove', text: 'Remove' },
   ];
 
   constructor() {

@@ -11,6 +11,7 @@ app.set('view engine', 'pug');
 app.set('views', 'views/pug');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Serving files statically
 app.use(express.static(path.resolve(__dirname, 'public')));

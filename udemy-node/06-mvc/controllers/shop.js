@@ -50,9 +50,13 @@ const getCartPage = (req, res) => {
 
 const postCart = (req, res) => {
   const { productId } = req.body;
+  const isRedirectNeed = req.headers['content-type'] !== 'application/json';
   Cart.addToCart(productId, (err, products) => {
-    if (!err) {
+    if (err) return;
+    if (isRedirectNeed) {
       res.redirect('/cart');
+    } else {
+      res.send(products);
     }
   });
 };

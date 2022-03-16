@@ -3,16 +3,13 @@ extends ../layouts/main-layout.pug
 block title
   title #{docTitle}
 
-block script
-  script(src="/js/shop/products.js", defer) 
-
 block content
   main
     h1 Shop
     section.products
       if products.length > 0
         each product of products
-          product-item(data-product=product)
+          product-item(data-product=product, data-operations=`["detail", "cart"]`)
       else
         p no product
     img(src="/image/Suzuha.jpeg", alt="avatar")

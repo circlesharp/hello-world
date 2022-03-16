@@ -9,6 +9,6 @@ block content
     section.products
       if products.length > 0
         each product of products
-          product-item(data-product=product)
+          product-item(data-product=product, data-operations=`["detail", "remove"]`)
       else
         p no product
