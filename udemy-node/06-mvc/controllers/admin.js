@@ -1,9 +1,20 @@
 const Product = require('../models/product');
 
-const getAddProductPage = (req, res) => {
-  res.render('admin/add-product', {
-    route: 'admin/add-product',
-  });
+const getEditProductPage = (req, res) => {
+  const { productId } = req.params;
+
+  if (productId != null) {
+    Product.getProduct(productId, (product) => {
+      res.render('admin/edit-product', {
+        route: 'admin/edit-product',
+        product,
+      });
+    });
+  } else {
+    res.render('admin/edit-product', {
+      route: 'admin/add-product',
+    });
+  }
 };
 
 const getProductsPage = (req, res) => {
@@ -16,15 +27,29 @@ const getProductsPage = (req, res) => {
   });
 };
 
-const postAddProduct = (req, res, next) => {
+const postAddProduct = (req, res) => {
   const body = req?.body ?? {};
   const { name, price, description } = body;
   const product = new Product({ name, price, description });
   product.save((err) => {
     if (!err) {
-      res.redirect('/');
+      res.redirect('/admin/products');
     }
   });
 };
 
-module.exports = { getAddProductPage, getProductsPage, postAddProduct };
+const postEditProduct = (req, res) => {
+  const product = req?.body ?? {};
+  Product.updateProduct(product, (err) => {
+    if (err) return;
+
+    res.redirect('/admin/products');
+  });
+};
+
+module.exports = {
+  getEditProductPage,
+  getProductsPage,
+  postAddProduct,
+  postEditProduct,
+};

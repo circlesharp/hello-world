@@ -1,0 +1,36 @@
+extends ../layouts/main-layout.pug
+
+
+block title
+  title Add Product
+
+block style
+  link(rel="stylesheet", href="/css/form.css")
+
+block title
+  - const isEdit = route === 'admin/edit-product';
+  title #{isEdit ? `Edit ${product.name}` : 'Add Product'}
+
+block content
+  main
+    - const url = isEdit ? '/admin/edit-product' : '/admin/add-product'
+    form(action=url, method="POST") 
+
+      div.form-element
+        label(for="name") Name
+        input#name(type="text" name="name", value=product && product.name)
+
+      div.form-element
+        label(for="price") Price
+        input#price(type="number" name="price" step="0.01", value=product && product.price)
+
+      div.form-element
+        label(for="desc") Description
+        // p.s. textarea 不支持 value
+        textarea#desc(name="description", cols="30", rows="10") #{product && product.description}
+
+      div
+        input#id(type="hidden" name="id" value=product && product.id)
+
+      div.form-element
+        input(type="submit") 

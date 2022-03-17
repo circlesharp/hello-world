@@ -43,6 +43,18 @@ class DBFile {
     });
   }
 
+  updateProduct(product, cb = (i) => i) {
+    this.getAllProducts((products) => {
+      const idx = products.findIndex((p) => p.id === Number(product.id));
+      products[idx] = {
+        ...products[idx],
+        ...product,
+        id: products[idx].id,
+      };
+      fs.writeFile(PRODUCTS_FILE_PATH, JSON.stringify(products), cb);
+    });
+  }
+
   getCart(cb) {
     fs.readFile(CART_FILE_PATH, (err, fileContent) => {
       cb(err ? [] : JSON.parse(fileContent));

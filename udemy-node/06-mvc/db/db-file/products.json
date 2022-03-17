@@ -1,14 +1,1 @@
-[
-  {
-    "name": "circlesharp",
-    "price": "23",
-    "description": "Good guy!",
-    "id": 680271656285
-  },
-  {
-    "name": "drink",
-    "price": "2.01",
-    "description": "Drink for everyone!",
-    "id": 885802725102
-  }
-]
+[{"name":"circlesharp","price":"23","description":"Good guy!","id":680271656285},{"name":"drink","price":"2.33","description":"Drink for everyone!","id":885802725102},{"name":"My HTTPS Proxy","price":"233","description":"My HTTPS Proxy, Great!","id":324197768531},{"name":"Amy Tea","price":"3","description":"Amy is not a cup of tea.","id":413077538738}]

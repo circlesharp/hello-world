@@ -22,6 +22,10 @@ class Product {
       db.findProductById(id, cb);
     }
   }
+
+  static updateProduct(product, cb) {
+    db.updateProduct(product, cb);
+  }
 }
 
 module.exports = Product;

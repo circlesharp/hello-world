@@ -20,6 +20,7 @@ function addToCart(id) {
 
 function editProduct(id) {
   console.log('editProduct', id);
+  window.location.href = `/admin/edit-product/${id}`;
 }
 
 function removeProduct(id) {
