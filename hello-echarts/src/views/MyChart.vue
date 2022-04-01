@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import { MyFirstChart } from '../components/ChartComps';
+import { MyFirstChart } from '../components';
 </script>

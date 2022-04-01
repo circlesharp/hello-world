@@ -11,9 +11,6 @@ import * as echarts from 'echarts';
 const chartContainer = ref();
 
 const chartOptions = {
-  title: {
-    text: 'ECharts 入门示例',
-  },
   tooltip: {},
   xAxis: {
     data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],

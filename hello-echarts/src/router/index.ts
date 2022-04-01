@@ -3,12 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router';
 export const routes = [
   {
     path: '/',
-    redirect: { name: 'MyChart' },
+    redirect: { name: 'DataSet' },
   },
   {
     path: '/my-chart',
     name: 'MyChart',
     component: () => import('../views/MyChart.vue'),
+  },
+  {
+    path: '/dataset',
+    name: 'DataSet',
+    component: () => import('../views/DataSet.vue'),
   },
 ];
 

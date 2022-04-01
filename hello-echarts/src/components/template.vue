@@ -13,5 +13,12 @@ const chartContainer = ref();
 onMounted(() => {
   const chartDom = chartContainer.value as HTMLDivElement;
   if (!chartDom) return;
+
+  const myChart = echarts.init(chartDom, undefined, {
+    width: 600,
+    height: 400,
+  });
+
+  myChart.setOption();
 });
 </script>
