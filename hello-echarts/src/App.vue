@@ -5,7 +5,9 @@
     </RouterLink>
   </header>
 
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -13,17 +15,19 @@ import { RouterLink, RouterView } from 'vue-router';
 import { routes } from './router';
 </script>
 
-<style scoped>
+<style scoped lang="less">
 header {
   background-color: #eee;
   padding: 10px 20px;
+  & > * {
+    font-weight: bold;
+  }
+  & > * + * {
+    margin-left: 10px;
+  }
 }
 
-header > * {
-  font-weight: bold;
-}
-
-header > * + * {
-  margin-left: 10px;
+main {
+  margin-top: 20px;
 }
 </style>
