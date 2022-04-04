@@ -30,7 +30,7 @@ const dataset = {
   ],
 };
 
-const option = {
+const option = computed(() => ({
   title: {
     text: '对象数组',
     subtext:
@@ -45,7 +45,7 @@ const option = {
   series: Array(seriesQty.value)
     .fill(null)
     .map(() => ({ type: 'bar', seriesLayoutBy: seriesLayoutBy.value })),
-};
+}));
 
 onMounted(() => {
   const chartDom = chartContainer.value as HTMLDivElement;
@@ -56,16 +56,13 @@ onMounted(() => {
     height: 400,
   });
 
-  myChart.setOption(option);
+  myChart.setOption(option.value);
 });
 
 function toggle() {
   seriesLayoutBy.value = seriesLayoutBy.value === 'row' ? 'column' : 'row';
-  option.series = Array(seriesQty.value)
-    .fill(null)
-    .map(() => ({ type: 'bar', seriesLayoutBy: seriesLayoutBy.value }));
 
-  myChart.setOption(option, {
+  myChart.setOption(option.value, {
     replaceMerge: ['series'],
   });
 }
