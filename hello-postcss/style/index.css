@@ -1,0 +1,9 @@
+@import './a.css';
+@import './b.css';
+@import './c.css';
+@import './future.css';
+@import './custom_media.css';
+
+.index {
+  font-family: 'index';
+}

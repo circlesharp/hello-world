@@ -1,0 +1,8 @@
+/* postcss-preset-env 支持未来的特性 */
+@custom-media --viewport-large (mix-width: 123em);
+
+@media (--viewport-large) {
+  .custom-media {
+    font-family: 'custom_media';
+  }
+}
