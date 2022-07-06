@@ -1,4 +1,6 @@
 /* postcss-preset-env 支持未来的特性 */
+@import './custom_media.css';
+
 .future {
   & .feature {
     font-family: 'future-feature';

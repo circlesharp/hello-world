@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postcss": "postcss style/index.css style/future.css --dir public",
     "postcss:watch": "postcss style/index.css --dir public --watch"
   },
   "keywords": [],

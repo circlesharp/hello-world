@@ -1,0 +1,10 @@
+/* postcss-preset-env 支持未来的特性 */
+/* postcss-preset-env 支持未来的特性 */
+@media (mix-width: 123em) {
+  .custom-media {
+    font-family: 'custom_media';
+  }
+}
+.future .feature {
+    font-family: 'future-feature';
+  }

@@ -4,6 +4,7 @@ module.exports = {
     require('postcss-preset-env')({
       stage: 1,
     }),
+    require('./plugin/track-deps'),
     // require('cssnano'),
   ],
 };

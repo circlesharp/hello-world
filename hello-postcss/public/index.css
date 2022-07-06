@@ -7,16 +7,6 @@
 .c {
   font-family: 'c-c';
 }
-/* postcss-preset-env 支持未来的特性 */
-.future .feature {
-    font-family: 'future-feature';
-  }
-/* postcss-preset-env 支持未来的特性 */
-@media (mix-width: 123em) {
-  .custom-media {
-    font-family: 'custom_media';
-  }
-}
 .index {
   font-family: 'index';
 }
