@@ -12,3 +12,8 @@ yarn.lock
 *.mobileprovision
 *.orig.*
 web-build/
+
+hello-nginx/nginx/*
+!hello-nginx/nginx/conf/
+!hello-nginx/nginx/html/
+!hello-nginx/nginx/www/
