@@ -4,10 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node ./bin/trackDeps.js",
+    "un": "npm unlink --location=global hello-npm"
   },
   "bin": {
-    "hello-npm-hi": "./bin/hello-npm-hi.js"
+    "trzHi": "./bin/trzHi.js",
+    "trackDeps": "./bin/trackDeps.js"
+  },
+  "dependencies": {
+    "jscodeshift": "^0.13.1"
   },
   "keywords": [],
   "author": "",
